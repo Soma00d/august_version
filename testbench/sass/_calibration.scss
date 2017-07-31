@@ -1,0 +1,448 @@
+#content_calibration{
+    .bt_moins{
+        border: 1px solid black;
+        cursor: pointer;
+        width: 28px;
+        height: 25px;
+        text-align: center;
+        border-radius: 5px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+        padding-top: 3px;
+    }
+    .bt_plus{
+        border: 1px solid black;
+        cursor: pointer;
+        width: 28px;
+        height: 25px;
+        text-align: center;
+        border-radius: 5px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+        padding-top: 3px;
+    }
+    .intitule{
+        font-weight: bold;
+        font-size: 30px;
+        text-align: center;
+    }
+    .toolbox_calibration{
+        text-align:center;
+    }
+    .get_config{
+        text-align: center;
+        background: #f2f2f2;
+        padding: 10px;
+        width: 250px;
+        border-radius: 5px;
+        border: 2px solid black;
+        display: inline-block;
+        vertical-align: top;
+        height: 128px;
+        .bt_get_config{
+            margin-bottom: 10px;
+        }
+        .config_info{
+            text-align: left;
+            .text_config{
+                font-weight:bold;
+            }
+        }        
+    }
+    .eprom_protect{
+        width: 199px;
+        border: 2px solid #3b73b9;
+        border-radius: 5px;
+        padding: 5px;
+        position: absolute;
+        top: 150px;
+        left: 250px;
+        .img_eprom{
+            width: 35px;
+            height: auto;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        .txt_eprom{            
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .bt_eprom{            
+            border-radius: 5px;
+            background: #c4c4c4;
+            font-weight: bold;
+            text-align: center;
+            height: 21px;
+            padding-top: 3px;
+            box-shadow: 1px 1px 1px black;
+            width: 140px;
+            cursor: pointer;
+            margin-top: 5px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 10px;
+        }
+    }
+    .realtime_joysticks_val{
+        text-align: center;
+        background: #f2f2f2;
+        padding: 10px;
+        width: 250px;
+        border-radius: 5px;
+        border: 2px solid black;
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 50px;
+        height: 128px;
+        .current_joystick{
+            font-weight:bold;
+        }
+        .bloc_left_joy{
+            text-align: left;
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 10px;
+            border-right: 1px solid black;
+            width:100px;
+        }
+        .bloc_right_joy{
+            text-align: left;
+            display: inline-block;
+            vertical-align: top;
+            width:100px;
+        }
+    }
+    .download_tool{
+        text-align: center;
+        background: #f2f2f2;
+        padding: 10px;
+        width: 500px;
+        border-radius: 5px;
+        border: 2px solid black;
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 50px;
+        .title_download{
+            font-weight:bold;
+            margin-bottom:10px;
+        }
+        .content_upl{
+            text-align:left;
+            margin-top: -12px;
+            span{
+                color:green;
+                font-weight:bold;
+            }
+        }
+        .start_download{
+            border: 1px solid black;
+            background: #3b73b9;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 8px;
+            width: 122px;
+            box-shadow: 1px 1px 1px black;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .stop_download{
+            border: 1px solid black;
+            background: red;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 8px;
+            width: 122px;
+            box-shadow: 1px 1px 1px black;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+    .jauge_container_global{
+        text-align:center;
+    }
+    .canvas_jauge{
+        position: relative;
+        width: 235px;
+        height: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        display: inline-block;
+        vertical-align: top;
+        margin:30px;
+        .title_jauge{
+            font-weight: bold;
+            font-size: 26px;
+        }
+        
+        #jauge_joystick_horizontal_left{
+            position: absolute;
+            left: 0px;
+            top: 132px;
+            .jauge_container{
+                width: 100px;
+                height: 30px;
+                border: 1px solid black;
+                background:yellowgreen;
+                box-shadow: -2px 0px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                width:100%;
+                height: 30px;
+                background:white;
+            }
+        }
+        #jauge_joystick_horizontal_right{
+            position: absolute;
+            left: 132px;
+            top: 132px;
+            .jauge_container{
+                width: 100px;
+                height: 30px;
+                border: 1px solid black;
+                background:white;
+                box-shadow: 2px 0px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                width:0%;
+                height: 30px;
+                background:yellowgreen;
+            }
+        }
+        #jauge_joystick_vertical_top{
+            position: absolute;
+            left: 101px;
+            .jauge_container{
+                height: 100px;
+                width: 30px;
+                border: 1px solid black;
+                background:yellowgreen;
+                box-shadow: 0px -2px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                height:100%;
+                width: 30px;
+                background:white;
+            }
+        }
+        #jauge_joystick_vertical_bot{
+            position: absolute;
+            left: 101px;
+            top:203px;
+            .jauge_container{
+                height: 100px;
+                width: 30px;
+                border: 1px solid black;
+                background:white;
+                box-shadow: 0px 2px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                height:0%;
+                width: 30px;
+                background:yellowgreen;
+            }
+            .informations{
+                margin-top:6px;
+            }
+        }
+        
+        
+        #jauge_joystick_horizontal_left_2{
+            position: absolute;
+            left: 0px;
+            top: 132px;
+            .jauge_container{
+                width: 100px;
+                height: 30px;
+                border: 1px solid black;
+                background:yellowgreen;
+                box-shadow: -2px 0px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                width:100%;
+                height: 30px;
+                background:white;
+            }
+        }
+        #jauge_joystick_horizontal_right_2{
+            position: absolute;
+            left: 132px;
+            top: 132px;
+            .jauge_container{
+                width: 100px;
+                height: 30px;
+                border: 1px solid black;
+                background:white;
+                box-shadow: 2px 0px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                width:0%;
+                height: 30px;
+                background:yellowgreen;
+            }
+        }
+        #jauge_joystick_vertical_top_2{
+            position: absolute;
+            left: 101px;
+            .jauge_container{
+                height: 100px;
+                width: 30px;
+                border: 1px solid black;
+                background:yellowgreen;
+                box-shadow: 0px -2px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                height:100%;
+                width: 30px;
+                background:white;
+            }
+        }
+        #jauge_joystick_vertical_bot_2{
+            position: absolute;
+            left: 101px;
+            top:203px;
+            .jauge_container{
+                height: 100px;
+                width: 30px;
+                border: 1px solid black;
+                background:white;
+                box-shadow: 0px 2px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                height:0%;
+                width: 30px;
+                background:yellowgreen;
+            }
+            .informations{
+                margin-top:6px;
+            }
+        }
+        
+        #jauge_joystick_horizontal_left_3{
+            position: absolute;
+            left: 0px;
+            top: 132px;
+            .jauge_container{
+                width: 100px;
+                height: 30px;
+                border: 1px solid black;
+                background:yellowgreen;
+                box-shadow: -2px 0px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                width:100%;
+                height: 30px;
+                background:white;
+            }
+        }
+        #jauge_joystick_horizontal_right_3{
+            position: absolute;
+            left: 132px;
+            top: 132px;
+            .jauge_container{
+                width: 100px;
+                height: 30px;
+                border: 1px solid black;
+                background:white;
+                box-shadow: 2px 0px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                width:0%;
+                height: 30px;
+                background:yellowgreen;
+            }
+        }
+        #jauge_joystick_vertical_top_3{
+            position: absolute;
+            left: 101px;
+            .jauge_container{
+                height: 100px;
+                width: 30px;
+                border: 1px solid black;
+                background:yellowgreen;
+                box-shadow: 0px -2px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                height:100%;
+                width: 30px;
+                background:white;
+            }
+        }
+        #jauge_joystick_vertical_bot_3{
+            position: absolute;
+            left: 101px;
+            top:203px;
+            .jauge_container{
+                height: 100px;
+                width: 30px;
+                border: 1px solid black;
+                background:white;
+                box-shadow: 0px 2px 5px 0px grey;
+            }
+            .jauge_remplissage{
+                height:0%;
+                width: 30px;
+                background:yellowgreen;
+            }
+            .informations{
+                margin-top:6px;
+            }
+        }
+        
+        .calibrate_bt_1, .calibrate_bt_2, .calibrate_bt_3{
+            position:absolute;
+            margin:auto;
+            left:0;
+            right:0;
+            top:350px;
+            .calibrate_tool{
+                border: 3px solid #3b73b9;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            .status_calib{
+                color: #3b73b9;
+                font-weight: bold;
+                font-size: 21px;
+                margin-bottom: 10px;
+            }
+            .action_calib{
+                font-size:18px;
+            }
+            .validate_calib{
+                margin-top: 10px;
+                background: #3b73b9;
+                color: white;
+                font-size: 18px;
+                width: 100px;
+                height: 30px;
+                border-radius: 5px;
+                box-shadow: 1px 1px 1px black;
+                padding-top: 8px;
+                cursor: pointer;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 10px;
+            }
+        }
+    }
+    
+    
+    .informations{
+        width: 100px;
+        margin-bottom: 10px;
+        height: 15px;
+        margin-top: 15px;
+        .zero{
+            float:left;
+            
+        }
+        .cent{
+            float:right;
+        }
+    }
+}

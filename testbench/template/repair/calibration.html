@@ -1,0 +1,170 @@
+<div class="section_container">
+    <div class="title title_main">Calibration</div>
+    <div class="eprom_protect protected">
+        <img class="img_eprom" src="images/protected.png"/>
+        <div class="txt_eprom">EEPROM is protected</div>        
+        <div class="bt_eprom">UNLOCK EPROM</div>
+    </div>
+    <div class="toolbox_calibration">
+        <div class="get_config">
+            <button class="bt_get_config">Get configuration</button>
+            <div class="config_info">
+                <span class="text_config">Boot Release : </span><span class="boot_config"></span><br>
+                <span class="text_config">FPGA Release : </span><span class="fpga_config"></span><br>
+                <span class="text_config">SW Release : </span><span class="sw_config"></span><br>
+                <span class="text_config">Unic ID : </span><span class="unic_config"></span>
+            </div>
+        </div>
+        <div class="realtime_joysticks_val hidden">
+            <div class="joystick_val_info">
+                <span class="text_config">Current : </span><span class="current_joystick">Collimator</span><br><br>
+                <div class="bloc_left_joy">
+                    <span class="text_config">X : </span><span class="x_value_joy"></span><br>
+                    <span class="text_config">Min X : </span><span class="minx_value_joy"></span><br>
+                    <span class="text_config">Max X : </span><span class="maxx_value_joy"></span><br>
+                </div>
+                <div class="bloc_right_joy">
+                    <span class="text_config">Y : </span><span class="y_value_joy"></span><br>
+                    <span class="text_config">Min Y : </span><span class="miny_value_joy"></span><br>
+                    <span class="text_config">Max Y : </span><span class="maxy_value_joy"></span>
+                </div>
+            </div>
+        </div>
+        <div class="download_tool">
+            <div class="title_download">Upload Calibration FW</div>
+            <div class="testing_upl">
+            <input type="file" id="fileinput" /><br><br>
+            <div class="content_upl"></div>
+            <div class="start_download hidden">Start Download</div>
+            <div class="stop_download hidden">Stop Download</div>
+        </div>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="jauge_container_global">
+        <div class="canvas_jauge">
+            <div class="title_jauge">JOYSTICK 1</div>
+            <div id="jauge_joystick_horizontal_left">
+                <div class="informations"><span class="zero">-100%</span></div>
+                <div class="jauge_container dir_left">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_horizontal_right">
+                <div class="informations"><span class="cent">100%</span></div>
+                <div class="jauge_container dir_right">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_vertical_top">
+                <div class="informations"><span class="zero">100%</span></div>
+                <div class="jauge_container dir_top">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_vertical_bot">
+
+                <div class="jauge_container dir_top">
+                    <div class="jauge_remplissage"></div>
+                </div>      
+                <div class="informations"><span class="zero">-100%</span></div>
+            </div>
+            
+            <div class="calibrate_bt_1">
+                <button>Calibrate</button>
+                <div class="calibrate_tool hidden">
+                    <div class="status_calib"></div>
+                    <div class="action_calib"></div>
+                    <div class="validate_calib">Validate</div>
+                </div>
+            </div>
+        </div>    
+        <div class="canvas_jauge">
+            <div class="title_jauge">JOYSTICK 2</div>
+            <div id="jauge_joystick_horizontal_left_2">
+                <div class="informations"><span class="zero">-100%</span></div>
+                <div class="jauge_container dir_left">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_horizontal_right_2">
+                <div class="informations"><span class="cent">100%</span></div>
+                <div class="jauge_container dir_right">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_vertical_top_2">
+                <div class="informations"><span class="zero">100%</span></div>
+                <div class="jauge_container dir_top">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_vertical_bot_2">
+
+                <div class="jauge_container dir_top">
+                    <div class="jauge_remplissage"></div>
+                </div>      
+                <div class="informations"><span class="zero">-100%</span></div>
+            </div>
+            
+            <div class="calibrate_bt_2">
+                <button>Calibrate</button>
+                <div class="calibrate_tool hidden">
+                    <div class="status_calib"></div>
+                    <div class="action_calib"></div>
+                    <div class="validate_calib">Validate</div>
+                </div>
+            </div>
+        </div>    
+        <div class="canvas_jauge">
+            <div class="title_jauge">JOYSTICK 3</div>
+            <div id="jauge_joystick_horizontal_left_3">
+                <div class="informations"><span class="zero">-100%</span></div>
+                <div class="jauge_container dir_left">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_horizontal_right_3">
+                <div class="informations"><span class="cent">100%</span></div>
+                <div class="jauge_container dir_right">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_vertical_top_3">
+                <div class="informations"><span class="zero">100%</span></div>
+                <div class="jauge_container dir_top">
+                    <div class="jauge_remplissage"></div>
+                </div>        
+            </div>
+
+            <div id="jauge_joystick_vertical_bot_3">
+
+                <div class="jauge_container dir_top">
+                    <div class="jauge_remplissage"></div>
+                </div>      
+                <div class="informations"><span class="zero">-100%</span></div>
+            </div>
+            
+            <div class="calibrate_bt_3">
+                <button>Calibrate</button>
+                <div class="calibrate_tool hidden">
+                    <div class="status_calib"></div>
+                    <div class="action_calib"></div>
+                    <div class="validate_calib">Validate</div>
+                </div>
+            </div>
+        </div>    
+    </div>
+    
+</div>
