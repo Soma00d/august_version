@@ -408,7 +408,7 @@ $(document).ready(function(){
                 var canId = message.canId;
                 var canData = message.canData; 
                 break;
-            case "CALIBRATION":   
+            case "CALIBRATION": 
                 var message = JSON.parse(event.data);        
                 console.log(event.data);
                 var canId = message.canId;
@@ -432,10 +432,12 @@ $(document).ready(function(){
                     }
                 }
                 if(waitDownloadResponse != ""){
+                    //console.log("on detecte un waitresponse");
                     if(waitDownloadResponse == canId){
+                        console.log("canid = waitresponse"+canId + " "+waitDownloadResponse)
                         if(canData.substring(0,2) == "20" || canData.substring(0,2) == "30"){
-                            continueDownload = 1;
-                            waitDownloadResponse = "";
+                            continueDownload = 1;                            
+                            //console.log("on a foutu le continue download a 1")
                         }else if(canData.substring(0,2) == "80"){
                             continueDownload = 0;
                             waitDownloadResponse = "";
@@ -1200,20 +1202,21 @@ $(document).ready(function(){
     
     $(".testing_upl .start_download").on('click', function(){
         startDownload(Cal_canid);
+        //sendSignal(Cal_merde+Cal_dlc+Cal_canid+"2f511f0100000000");
     });
     
     $(".testing_upl .stop_download").on('click', function(){
         stopDownload(Cal_canid);
     });
     
-    function startDownload(canId){         
+    function startDownload(canId){ 
+        _MODE = "CALIBRATION";
         //stop application mode
         console.log("stop application mode");
         sendSignal(Cal_merde+Cal_dlc+canId+"2f511f0100000000");
         setTimeout(function(){
-            //start download mode
             console.log("start download mode");
-            if(arrayOfLines[0].substr(0,1)== "+"){
+            if(arrayOfLines[0].substring(0,1)== "+"){
                 var lengthFirstLine = arrayOfLines[0].length-1;
                 console.log(lengthFirstLine);
                 var newval= lengthFirstLine.toString(16);
@@ -1225,41 +1228,60 @@ $(document).ready(function(){
                     for(var index = 0;index < lengthFirstLine; index++){
                         asciiToHex += arrayOfLines[0].charCodeAt(index).toString(16);
                     }
-                    sendMultipleSignal(asciiToHex, canId);
-                    console.log("------------------------------------------");
-                    coreDownload(canId);
-//                    waitDownloadResponse = "000005ad";
-//                    var checkResponse = setInterval(function(){
-//                        console.log("check response");
-//                        if(waitDownloadResponse !== ""){
-//                            if(continueDownload == 1){
-//                                coreDownload();
-//                                clearInterval(checkResponse);
-//                            }
-//                        }else{
-//                            clearInterval(checkResponse);
-//                        }
-//                    }, 200);
+                    sendMultipleSignalStart(asciiToHex, canId, 0);
+                    console.log("------------------------------------------");                    
                 },200);
-            }
-            //sendSignal(Cal_merde+Cal_dlc+canId+"2f511f0101000000");
+            }else{
+                alert("invalide file format");
+                stopDownload(canId);
+            }            
         },200);
     };
-    function coreDownload(canId){
-        console.log("reponse reçu on continue le download");
-        var asciiToHex = "";
-        var lengthOfLine = arrayOfLines[2].length-1;
-        for(var index = 0;index < lengthOfLine; index++){
-            asciiToHex += arrayOfLines[2].charCodeAt(index).toString(16);
+    function coreDownload(canId, startIndex){
+        if(startIndex < arrayOfLines.length-1){
+            if(arrayOfLines[startIndex].substring(0,1)== "+"){
+                var lengthFirstLine = arrayOfLines[0].length-1;
+                console.log(lengthFirstLine);
+                var newval= lengthFirstLine.toString(16);
+                console.log(newval);
+                var customCAN = Cal_merde+Cal_dlc+canId+"21501f01"+newval+"000000";
+                sendSignal(customCAN);
+                setTimeout(function(){
+                    var asciiToHex = "";
+                    for(var index = 0;index < lengthFirstLine; index++){
+                        asciiToHex += arrayOfLines[startIndex].charCodeAt(index).toString(16);
+                    }
+                    sendMultipleSignalStart(asciiToHex, canId, startIndex);
+                    console.log("------------------------------------------");                    
+                },200);
+            }else{
+                console.log("LINE "+startIndex);
+                var lengthFirstLine = arrayOfLines[startIndex].length-1;
+                var newval = lengthFirstLine.toString(16);
+                if(lengthFirstLine <= 15){newval = "0"+newval}
+                var customCAN = Cal_merde+Cal_dlc+canId+"21501f01"+newval+"000000";
+                sendSignal(customCAN);
+                setTimeout(function(){
+                    var asciiToHex = "";
+                    for(var index = 0;index < lengthFirstLine; index++){
+                        asciiToHex += arrayOfLines[startIndex].charCodeAt(index).toString(16);
+                    }
+                    sendMultipleSignal(asciiToHex, canId, startIndex);
+                    
+                },2);
+            }
+        }else{
+            stopDownload(canId);
         }
-        sendMultipleSignal(asciiToHex, canId);
     };
     function stopDownload(canId){         
         //application mode
+        console.log("stop download mode");
+        waitDownloadResponse = "";
         sendSignal(Cal_merde+Cal_dlc+canId+"2f511f0101000000");
     };
     
-    function sendMultipleSignal(signal, canId){
+    function sendMultipleSignalStart(signal, canId, startIndex){
         var nbMessage = parseInt((signal.length/2)/7);
         if(nbMessage == 0){
             nbMessage = 1;
@@ -1267,17 +1289,18 @@ $(document).ready(function(){
         if(((signal.length/2)%7 > 0)){
             nbMessage += 1;
         }
-        var dataZero;      
-        for(var i = 0; i <nbMessage; i++){
+        var dataZero; 
+        sendSingle(0);
+        function sendSingle(index){
             var t;                        
             var c = 0;
             var n = 0;
-            if(i%2 == 0){
+            if(index%2 == 0){
                 t = 0;
             }else{
                 t = 16;
             }
-            if(i == (nbMessage-1)){
+            if(index == (nbMessage-1)){
                 c = 1;
                 n = 0+(7-(signal.length/2)%7)*2; 
                 if(n == 14){n = 0}
@@ -1287,13 +1310,86 @@ $(document).ready(function(){
             if(hexDataZero.length <2){
                 hexDataZero = "0"+hexDataZero;
             }
-            var startInd = (14*i);
-            var endInd = (14*i)+14;
+            var startInd = (14*index);
+            var endInd = (14*index)+14;
             var data = signal.substring(startInd, endInd);
             data = addZeroAfter(data,14);
-            console.log('t+n+c :'+t+" "+n+" "+c)
+            //console.log('t+n+c :'+t+" "+n+" "+c)
             sendSignal(Cal_merde+Cal_dlc+canId+hexDataZero+data);
-        }      
+            
+            waitDownloadResponse = "000005ad";
+            var checkResponse = setInterval(function(){
+//                console.log("check response");
+//                console.log("continueDownload : "+ continueDownload + "wait dl :"+waitDownloadResponse)
+                if(waitDownloadResponse !== ""){
+                    if(continueDownload > 0){                                
+                        continueDownload = 0;
+//                        console.log("on rentre dans continue download");
+                        if(index == (nbMessage-1) && index !=0){
+                            coreDownload(canId, startIndex+1)
+                        }else{
+                            setTimeout(function(){
+                                sendSingle(index+1);
+                            },5);
+                        }
+                        clearInterval(checkResponse);
+//                        console.log("launch core download");
+                        waitDownloadResponse = "";
+                    }
+                }else{
+                    clearInterval(checkResponse);
+//                    console.log("stop check interval");
+                }
+            }, 5);
+            
+        }
+           
+    }
+    function sendMultipleSignal(signal, canId, startIndex){
+        var nbMessage = parseInt((signal.length/2)/7);
+        if(nbMessage == 0){
+            nbMessage = 1;
+        }
+        if(((signal.length/2)%7 > 0)){
+            nbMessage += 1;
+        }
+        var dataZero; 
+        sendSingle(0);
+        function sendSingle(index){
+            var t;                        
+            var c = 0;
+            var n = 0;
+            if(index%2 == 0){
+                t = 0;
+            }else{
+                t = 16;
+            }
+            if(index == (nbMessage-1)){
+                c = 1;
+                n = 0+(7-(signal.length/2)%7)*2; 
+                if(n == 14){n = 0}
+            }
+            dataZero = 0+parseInt(t)+parseInt(n)+parseInt(c); 
+            var hexDataZero = dataZero.toString(16);
+            if(hexDataZero.length <2){
+                hexDataZero = "0"+hexDataZero;
+            }
+            var startInd = (14*index);
+            var endInd = (14*index)+14;
+            var data = signal.substring(startInd, endInd);
+            data = addZeroAfter(data,14);
+            //console.log('t+n+c :'+t+" "+n+" "+c)
+            sendSignal(Cal_merde+Cal_dlc+canId+hexDataZero+data);
+            if(index == (nbMessage-1) && index !=0){
+                coreDownload(canId, startIndex+1)
+            }else{
+                setTimeout(function(){
+                    sendSingle(index+1);
+                },1);
+            }
+            
+        }
+           
     }
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
