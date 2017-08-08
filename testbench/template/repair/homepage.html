@@ -1,30 +1,19 @@
 <div class="section_container">
-    <div class="title title_main">Welcome !</div>
-    
-    
-    <button id="test_calib">get NullDiff</button>
-    <button id="test_calib2">Nulldiff storing</button>
-    <button id="test_calib3">Axis raw acquisition max</button>
-    <button id="test_calib4">Maxdiff storing</button>
-    <button id="test_calib5">Axis raw acquisiton min</button>
-    <button id="test_calib6">Mindiff storing</button>
-    <button id="test_calib7">LOCK CALIB</button>
-    
-    
+    <div class="title title_main">Welcome to repair mode</div>
     
     <div class="bloc_container">
         <div class="bloc">
-            <div class="title_bloc">TSUI Informations</div>
+            <div class="title_bloc">TSUI Information</div>
             <div class="info_bloc">
-                User SSO : 
+                User SSO: 
                 <span class="input_zone blue">
                     <input id="user_sso_input" class="inp1" type="text" value="" placeholder="User SSO"/>
                 </span><br>
-                Part Number : 
+                Part Number: 
                 <span class="input_zone blue">
                     <input id="part_number_input" class="inp2" type="text" value="" placeholder="Part number"/>
                 </span><br>
-                Serial Number : 
+                Serial Number: 
                 <span class="input_zone blue">
                     <input id="serial_number_input" class="inp3" type="text" value="" placeholder="Serial Number"/>
                 </span><br>
@@ -35,21 +24,22 @@
         </div>
         
         <div class="bloc information tsui_img hidden">
-            <div class="title_bloc">TSUI Photo</div>
+            <div class="title_bloc">TSUI Overview</div>
             <img class="photo_tsui" src="">
         </div>
         
         <div class="bloc information tsui_info hidden">
             <div class="title_bloc name"></div>
             <div class="info_bloc">
-                Actual Firmware version : <span class="user_sso blue"></span><br>
-                ID Board : <span class="part_number blue"></span><br>
-                Card Serial Number : <span class="serial_number blue"></span><br>
+                Boot Config: <span class="boot_config blue"></span><br>
+                FPGA Config: <span class="fpga_config blue"></span><br>
+                Software Config: <span class="sw_config blue"></span><br>
+                Unique ID: <span class="unic_config blue"></span><br>
             </div>
         </div>
         
         <div class="bloc information hidden">
-            <div class="bouton" data-link="hometest">
+            <div class="bouton test_bt_home" data-link="hometest">
                 <img class="circle" src="images/circle_calib.png"
                      ><span class="text">Test</span>
             </div>

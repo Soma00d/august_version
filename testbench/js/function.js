@@ -50,6 +50,10 @@ $(document).ready(function(){
     var waitingAction;
     var waitingPressValue;
     var waitingReleaseValue;
+    var pressValueContinue;
+    var releaseValueContinue;
+    var validateTest = 0;
+    
     var waitingValue;    
     var indexFinal;
     var maxIndexFinal;
@@ -88,6 +92,10 @@ $(document).ready(function(){
     var arrayOfLines;
     var waitDownloadResponse = "";
     var continueDownload = 0;
+    var isDownloading = 0;
+    var lineDownloading = 0;
+    var downloadingBar = $(".download_tool .downloading_bar_container .downloading_bar");
+    var downloadingBarContent = $(".download_tool .downloading_bar_container .downloading_bar_content");
     
     
     //-----------------------------------------------------//
@@ -126,6 +134,7 @@ $(document).ready(function(){
                     $("#content_home .information").removeClass("hidden");
                     $(".head_userinfo").removeClass("hidden");
                     $(".head_userinfo .info .role_user").html("Repair");
+                    getInfoCard("ELEGANCE", "000005ad");
                 }    
                 //Recupération du dictionnaire correspondant
                 $.ajax({
@@ -237,7 +246,7 @@ $(document).ready(function(){
                     $("#content_homeE .information").removeClass("hidden");
                     $(".head_userinfo").removeClass("hidden");
                     $(".head_userinfo .info .role_user").html("Engineering");
-                    
+                    getInfoCard("ELEGANCE", "000005ad");
                 }    
                 //Recupération du dictionnaire correspondant
                 $.ajax({
@@ -264,7 +273,22 @@ $(document).ready(function(){
         }        
     }); 
     
-    
+    function getInfoCard(model, id){
+        _MODE = "CALIBRATION";
+        pingGetInfo(model, id);
+        setTimeout(function(){
+            var newBootRelease = bootRelease.substring(6,8)+"."+bootRelease.substring(4,6);
+            $(".boot_config").html(newBootRelease);
+            var newFPGARelease = FPGARelease.substring(6,8)+FPGARelease.substring(4,6)+"."+FPGARelease.substring(2,4)+FPGARelease.substring(0,2);
+            $(".fpga_config").html(newFPGARelease);
+            var newsoftwareRelease = softwareRelease.substring(6,8)+"."+softwareRelease.substring(4,6);
+            $(".sw_config").html(newsoftwareRelease);
+            var newunicID = unicID.substring(14,16)+"."+unicID.substring(12,14)+"."+unicID.substring(10,12)+"."+unicID.substring(8,10)+" "+unicID.substring(6,8)+"."+unicID.substring(4,6)+"."+unicID.substring(2,4)+"."+unicID.substring(0,2);
+            $(".unic_config").html(newunicID);
+            
+            _MODE = "PRETEST";
+        },1200);
+    }
     
     
     
@@ -402,11 +426,27 @@ $(document).ready(function(){
                     }
                 }
                 break;
-            case "TEST":   
+            case "TESTFINAL":   
                 var message = JSON.parse(event.data);        
                 console.log(event.data);
                 var canId = message.canId;
                 var canData = message.canData; 
+                if(waitingAction != ""){
+                    switch(waitingAction){
+                        case "BUTTON":
+                            if(waitingPressValue == canData){
+                                pressValueContinue = 1;
+                            }
+                            if(waitingReleaseValue == canData){
+                                releaseValueContinue = 1;
+                            }
+                            if(pressValueContinue == 1 && releaseValueContinue == 1){
+                                validateTest = 1;
+                                waitingAction = "";
+                            }
+                            break;
+                    }
+                }
                 break;
             case "CALIBRATION": 
                 var message = JSON.parse(event.data);        
@@ -686,7 +726,7 @@ $(document).ready(function(){
             url: "php/api.php?function=save_log_pretest",
             data: {jsonlog:jsonLog},
             success: function (msg) {
-                alert("Your log have been saved.");
+                alert("Your log has been saved.");
                 $("#print_log").removeClass("hidden");
             }
         });
@@ -766,6 +806,7 @@ $(document).ready(function(){
      //Click on launch final test button
     $(".launch_final").on('click', function(){
         launchFinalTest();
+        $(".instructions_testfinal").addClass("hidden");
     });
     
     //valider manuellement l'étape (dev only)
@@ -795,7 +836,7 @@ $(document).ready(function(){
     //Launch final test
     function launchFinalTest(){
         indexFinal = 0;
-        _MODE = "TEST";
+        _MODE = "TESTFINAL";
         getFinalTest();
         
         setTimeout(function(){
@@ -818,7 +859,7 @@ $(document).ready(function(){
     }
     
     //Affichage du test final en cours
-    function displayFinalTest(indexFinal){
+    function displayFinalTest(indexFinal){        
         var pourcentage = Math.round((indexFinal/maxIndexFinal)*100);
         
         currSymbol_name = finalTestEntries[indexFinal].symbol_name;
@@ -843,6 +884,10 @@ $(document).ready(function(){
                 imgFinal.attr('src', 'images/'+currPhoto_link);
                 progressBarFinalInside.css('width',pourcentage+'%');
                 progressBarFinal.html(pourcentage+'%');
+                waitingAction = "BUTTON";
+                waitingPressValue = pressed_val_freq;
+                waitingReleaseValue = released_val_freq;
+                console.log("waiting action :"+waitingAction+" // "+pressed_val_freq + " / "+released_val_freq);
                 break;
             case "joystick":
                 break;
@@ -877,6 +922,13 @@ $(document).ready(function(){
             if(timer == 0){
                 nextStepFinal("fail");                
             }else{
+                if(validateTest == 1){
+                    pressValueContinue = 0;
+                    releaseValueContinue = 0;
+                    validateTest = 0;
+                    waitingAction = "";
+                    nextStepFinal("ok");
+                }
                 timerBloc.html(timer);
                 timer -= 1;
             }            
@@ -943,6 +995,10 @@ $(document).ready(function(){
         calibrateZeroLong("3");
         $(this).addClass("hidden");
     });    
+    $(".verify_calibration").on('click', function(){
+        _MODE = "CALIBRATION";
+        verifyCalibration();
+    });    
     
    
     
@@ -999,10 +1055,10 @@ $(document).ready(function(){
     
     //Recuperation de la position Longitudinale et stockage dans l'EPROM
     function calibrateZeroLong(identifier){
-        $(".calibrate_bt_"+identifier).find(".status_calib").html("Axis Raw acquisition ZERO");
-        $(".calibrate_bt_"+identifier).find(".action_calib").html("Be sure joystick "+identifier+" is on position zero then click.");
+        $(".calibrate_bt_"+identifier).find(".status_calib").html("Set ZERO position");
+        $(".calibrate_bt_"+identifier).find(".action_calib").html("<img src='images/zero_arrow.png'>");
         $(".calibrate_bt_"+identifier).find(".validate_calib").on('click', function(){
-            alert("length = "+axisRawSignal.length+" ..send signal acquisition ZERO : "+axisRawSignal);
+            //alert("length = "+axisRawSignal.length+" ..send signal acquisition ZERO : "+axisRawSignal);
             sendSignal(axisRawSignal);
             waitCalibResponse = "000005ad";
             setTimeout(function(){
@@ -1015,10 +1071,10 @@ $(document).ready(function(){
     }
     function calibrateMaxLong(identifier){
         $(".calibrate_bt_"+identifier).find(".validate_calib").off();
-        $(".calibrate_bt_"+identifier).find(".status_calib").html("Axis Raw acquisition max");
-        $(".calibrate_bt_"+identifier).find(".action_calib").html("Press joystick "+identifier+" at maximum RIGHT position then click.");
+        $(".calibrate_bt_"+identifier).find(".status_calib").html("Set RIGHT position max");
+        $(".calibrate_bt_"+identifier).find(".action_calib").html("<img src='images/right_arrow.png'>");
         $(".calibrate_bt_"+identifier).find(".validate_calib").on('click', function(){
-            alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MAX : "+axisRawSignal);  
+            //alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MAX : "+axisRawSignal);  
             sendSignal(axisRawSignal);
             waitCalibResponse = "000005ad";
             setTimeout(function(){
@@ -1031,10 +1087,10 @@ $(document).ready(function(){
     }
     function calibrateMinLong(identifier){
         $(".calibrate_bt_"+identifier).find(".validate_calib").off();
-        $(".calibrate_bt_"+identifier).find(".status_calib").html("Axis Raw acquisition min");
-        $(".calibrate_bt_"+identifier).find(".action_calib").html("Press joystick "+identifier+" at minimum LEFT position then click.");
+        $(".calibrate_bt_"+identifier).find(".status_calib").html("Set LEFT position max");
+        $(".calibrate_bt_"+identifier).find(".action_calib").html("<img src='images/left_arrow.png'>");
         $(".calibrate_bt_"+identifier).find(".validate_calib").on('click', function(){
-            alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
+            //alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
             sendSignal(axisRawSignal);
             waitCalibResponse = "000005ad";
             setTimeout(function(){
@@ -1049,10 +1105,10 @@ $(document).ready(function(){
     //Recuperation de la position Verticale et stockage dans l'EPROM
     function calibrateMinLat(identifier){
         $(".calibrate_bt_"+identifier).find(".validate_calib").off();
-        $(".calibrate_bt_"+identifier).find(".status_calib").html("Axis Raw acquisition min");
-        $(".calibrate_bt_"+identifier).find(".action_calib").html("Press joystick "+identifier+" at maximum BOTTOM position then click.");
+        $(".calibrate_bt_"+identifier).find(".status_calib").html("Set BOTTOM position max");
+        $(".calibrate_bt_"+identifier).find(".action_calib").html("<img src='images/down_arrow.png'>");
         $(".calibrate_bt_"+identifier).find(".validate_calib").on('click', function(){
-            alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
+            //alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
             sendSignal(axisRawSignal);
             waitCalibResponse = "000005ad";
             setTimeout(function(){
@@ -1065,10 +1121,10 @@ $(document).ready(function(){
     }
     function calibrateMaxLat(identifier){
         $(".calibrate_bt_"+identifier).find(".validate_calib").off();
-        $(".calibrate_bt_"+identifier).find(".status_calib").html("Axis Raw acquisition max");
-        $(".calibrate_bt_"+identifier).find(".action_calib").html("Press joystick "+identifier+" at maximum TOP position then click.");
+        $(".calibrate_bt_"+identifier).find(".status_calib").html("Set TOP position max");
+        $(".calibrate_bt_"+identifier).find(".action_calib").html("<img src='images/top_arrow.png'>");
         $(".calibrate_bt_"+identifier).find(".validate_calib").on('click', function(){
-            alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
+            //alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
             sendSignal(axisRawSignal);
             waitCalibResponse = "000005ad";
             setTimeout(function(){
@@ -1081,10 +1137,10 @@ $(document).ready(function(){
     }
     function calibrateZeroLat(identifier){
         $(".calibrate_bt_"+identifier).find(".validate_calib").off();
-        $(".calibrate_bt_"+identifier).find(".status_calib").html("Axis Raw acquisition min");
-        $(".calibrate_bt_"+identifier).find(".action_calib").html("Press joystick "+identifier+" at ZERO position then click.");
+        $(".calibrate_bt_"+identifier).find(".status_calib").html("Set ZERO position");
+        $(".calibrate_bt_"+identifier).find(".action_calib").html("<img src='images/zero_arrow.png'>");
         $(".calibrate_bt_"+identifier).find(".validate_calib").on('click', function(){
-            alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
+            //alert("length = "+axisRawSignal.length+" ..send signal acquisition axis raw MIN : "+axisRawSignal);  
             sendSignal(axisRawSignal);
             waitCalibResponse = "000005ad";
             setTimeout(function(){
@@ -1098,13 +1154,47 @@ $(document).ready(function(){
     
     function resetCalibration(identifier){
         $(".calibrate_bt_"+identifier).find(".validate_calib").off();
-        $(".calibrate_bt_"+identifier).find(".status_calib").html("Recap final Values");
-
+        $(".calibrate_bt_"+identifier).find(".status_calib").html("Joystick "+identifier+ " is calibrated");
+        $(".calibrate_bt_"+identifier).find(".action_calib").html("");
         $(".calibrate_bt_"+identifier).find(".validate_calib").on('click', function(){
-            pingEpromValues();
+            switch(identifier){
+                case "1":
+                    calibrateBt1.find(".calibrate_tool").addClass("hidden");
+                    calibrateBt1.find("button").removeClass("hidden");
+                    $(".calibrate_bt_"+identifier).find(".validate_calib").off();
+                    break;
+                case "2":
+                    calibrateBt2.find(".calibrate_tool").addClass("hidden");
+                    calibrateBt2.find("button").removeClass("hidden");
+                    $(".calibrate_bt_"+identifier).find(".validate_calib").off();
+                    break;
+                case "3":
+                    calibrateBt3.find(".calibrate_tool").addClass("hidden");
+                    calibrateBt3.find("button").removeClass("hidden");
+                    $(".calibrate_bt_"+identifier).find(".validate_calib").off();
+                    break;
+            }
         });
     }
     
+    
+    function verifyCalibration(){
+        var timerVerif = 10000;
+        setInterval(function(){                     
+            sendSignal(axisRawSignal)
+            waitCalibResponse = "000005ad";
+            setTimeout(function(){
+                var response = finalResponseData;
+                var part1resp = response.substring(0,2);
+                var part2resp = response.substring(2,4);
+                response = part2resp+part1resp;
+                response = convertHexa(response);
+                console.log(response);
+                //if(response)
+            },10);
+            timerVerif -=10;
+        },20)
+    }
          
     
     
@@ -1211,6 +1301,9 @@ $(document).ready(function(){
     
     function startDownload(canId){ 
         _MODE = "CALIBRATION";
+        isDownloading = 1;
+        downloadingBarProgress(arrayOfLines.length);
+        $(".downloading_bar_container").removeClass("hidden");
         //stop application mode
         console.log("stop application mode");
         sendSignal(Cal_merde+Cal_dlc+canId+"2f511f0100000000");
@@ -1239,6 +1332,7 @@ $(document).ready(function(){
     };
     function coreDownload(canId, startIndex){
         if(startIndex < arrayOfLines.length-1){
+            lineDownloading = startIndex;
             if(arrayOfLines[startIndex].substring(0,1)== "+"){
                 var lengthFirstLine = arrayOfLines[0].length-1;
                 console.log(lengthFirstLine);
@@ -1271,16 +1365,32 @@ $(document).ready(function(){
                 },2);
             }
         }else{
-            stopDownload(canId);
+            setTimeout(function(){
+                stopDownload(canId);
+            },500);
+            
         }
     };
     function stopDownload(canId){         
         //application mode
         console.log("stop download mode");
         waitDownloadResponse = "";
+        isDownloading = 0;
+        $(".downloading_bar_container").addClass("hidden");
         sendSignal(Cal_merde+Cal_dlc+canId+"2f511f0101000000");
     };
     
+    function downloadingBarProgress(totalLine){
+        var interval  = setInterval(function(){            
+            if(isDownloading >0){
+                var percentLine = Math.round((lineDownloading/totalLine)*100);
+                downloadingBar.css("width",percentLine+"%");
+                downloadingBarContent.html(percentLine+" %");
+            }else{
+                clearInterval(interval);
+            }            
+        }, 2000);
+    }
     function sendMultipleSignalStart(signal, canId, startIndex){
         var nbMessage = parseInt((signal.length/2)/7);
         if(nbMessage == 0){
@@ -1409,6 +1519,10 @@ $(document).ready(function(){
         _MODE = "TOOLBOX";
         alert("mode toolbox activated");
     });
+    $(".test_bt_home").on('click', function(){
+        _MODE = "PRETEST";
+        alert("mode TEST activated");
+    });
     
     
     
@@ -1429,29 +1543,6 @@ $(document).ready(function(){
         }
         return newval;
     }
-    
-   
-    $("#test_calib").on('click', function(){
-        sendSignal(Cal_merde+Cal_dlc+Cal_canid+"4021540100000000");    
-    });
-    $("#test_calib2").on('click', function(){
-        sendSignal("002400806d68d7551407f09b861e3aad000549a8440800000000062d4020540100000000");    
-    });
-    $("#test_calib3").on('click', function(){
-        sendSignal("002400806d68d7551407f09b861e3aad000549a8440800000000062d401f540100000000");    
-    });
-    $("#test_calib4").on('click', function(){
-        sendSignal("002400806d68d7551407f09b861e3aad000549a8440800000000062d4022540100000000");    
-    });
-    $("#test_calib5").on('click', function(){
-        sendSignal("002400806d68d7551407f09b861e3aad000549a8440800000000062d401f540100000000");    
-    });
-    $("#test_calib6").on('click', function(){
-        sendSignal("002400806d68d7551407f09b861e3aad000549a8440800000000062d4021540100000000");    
-    });
-    $("#test_calib7").on('click', function(){
-        sendSignal("002400806d68d7551407f09b861e3aad000549a8440800000000062d4000550100000000");    
-    });
     
     
 });

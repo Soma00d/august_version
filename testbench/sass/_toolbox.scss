@@ -32,7 +32,37 @@
 #dialog-spybox{
     
 }
-
+#dialog-link-spybox{
+    background: none;
+    border: 3px solid #3b73b9;
+    border-radius: 5px;
+    font-size: 20px;
+    text-align: center;
+}
+#dialog-link-spybox, #dialog-link-sender, #dialog-link-calibration, #dialog-link-download{
+    display:inline-block;
+    vertical-align:top;
+    width: 150px;
+    background: none;
+    border: 3px solid #3b73b9;
+    border-radius: 5px;
+    font-size: 20px;
+    text-align: center;
+    color: #3b73b9;
+    background: #f2f2f2;
+    cursor: pointer;
+    margin: 10px;
+    padding: 5px;
+    box-shadow: 1px 1px 1px grey;
+    img{
+        width: 45px;
+    }
+}
+.container_toolbox_bt{
+    text-align:center;
+}
+    
+    
 #dialog-spybox{
     
     .option_line{        

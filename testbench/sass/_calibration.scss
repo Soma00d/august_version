@@ -161,6 +161,27 @@
             margin-left: auto;
             margin-right: auto;
         }
+        .downloading_bar_container{
+            border: 1px solid black;
+            height: 20px;
+            margin-top: 6px;
+            position:relative;
+            .downloading_bar{
+                background: #b9e8ff;
+                width: 0%;
+                height: 20px;
+            }
+            .downloading_bar_content{
+                position:absolute;
+                margin-left:auto;
+                margin-right:auto;
+                left:0;
+                right:0;
+                top:0;
+                text-align: center;
+                font-weight: bold;   
+            }
+        }
     }
     .jauge_container_global{
         text-align:center;

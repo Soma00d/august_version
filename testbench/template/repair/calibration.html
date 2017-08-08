@@ -17,7 +17,7 @@
         </div>
         <div class="realtime_joysticks_val hidden">
             <div class="joystick_val_info">
-                <span class="text_config">Current : </span><span class="current_joystick">Collimator</span><br><br>
+                <button class='verify_calibration'>Verify</button>
                 <div class="bloc_left_joy">
                     <span class="text_config">X : </span><span class="x_value_joy"></span><br>
                     <span class="text_config">Min X : </span><span class="minx_value_joy"></span><br>
@@ -28,13 +28,18 @@
                     <span class="text_config">Min Y : </span><span class="miny_value_joy"></span><br>
                     <span class="text_config">Max Y : </span><span class="maxy_value_joy"></span>
                 </div>
+                <span class="text_config">Current : </span><span class="current_joystick">Collimator</span><br><br>
             </div>
         </div>
         <div class="download_tool">
-            <div class="title_download">Upload Calibration FW</div>
+            <div class="title_download">Download FW Toolbox</div>
             <div class="testing_upl">
             <input type="file" id="fileinput" /><br><br>
             <div class="content_upl"></div>
+            <div class="downloading_bar_container hidden">
+                <div class="downloading_bar"></div>
+                <div class="downloading_bar_content">0 %</div>
+            </div>
             <div class="start_download hidden">Start Download</div>
             <div class="stop_download hidden">Stop Download</div>
         </div>
